@@ -1,59 +1,83 @@
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Name : Styliani Moumtzi | Theodwros Tsirikolias
+    # Am   : p3220127         | p3220215
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 .text
     main:
         
         main_loop:
-            jal read_option
+            jal read_option #op=readOption();
             sw $v0,op
             lw $t0,op
-            blt $t0,1,exit      #elegxos while
+
+            blt $t0,1,exit  #elegxos while
             bgt $t0,8,exit
+
             case_1:
                 bne $t0,1,case_2
-                la $a0,c1
+
+                la $a0,c1   #printStr
                 li $v0,4
                 syscall
+
                 j read_op
             case_2:
                 bne $t0,2,case_3
-                la $a0,c2
+
+                la $a0,c2   #printStr
                 li $v0,4
                 syscall
+
                 j read_op
             case_3:
                 bne $t0,3,case_4
-                la $a0,c3
+
+                la $a0,c3   #printStr
                 li $v0,4
                 syscall
+
                 j read_op
             case_4:
                 bne $t0,4,case_5
-                la $a0,c4
+
+                la $a0,c4   #printStr
                 li $v0,4
                 syscall
+
                 j read_op
             case_5:
                 bne $t0,5,case_6
-                la $a0,c5
+
+                la $a0,c5   #printStr
                 li $v0,4
                 syscall
+
                 j read_op
             case_6:
                 bne $t0,6,case_7
-                la $a0,c6
+
+                la $a0,c6   #printStr
                 li $v0,4
                 syscall
+
                 j read_op
             case_7:
                 bne $t0,7,case_8
-                la $a0,c7
+
+                la $a0,c7   #printStr
                 li $v0,4
                 syscall
+
                 j read_op
             case_8:
                 bne $t0,8,read_op
-                la $a0,c8
+
+                la $a0,c8   #printStr
                 li $v0,4
                 syscall
+
                 j read_op
 
 
@@ -62,57 +86,70 @@
 
 
     exit:
-        la $a0,w
+        la $a0,w    #printStr
         li $v0,4
         syscall
-        li $v0,10
+
+        li $v0,10   #exit
         syscall
 
     read_option:
+    #-----------printing choices--------------------------------------------------
         la $a0,line
         li $v0,4
         syscall
+
         la $a0,d1
         li $v0,4
         syscall
+
         la $a0,d2
         li $v0,4
         syscall
+
         la $a0,d3
         li $v0,4
         syscall
+
         la $a0,d4
         li $v0,4
         syscall
+
         la $a0,d5
         li $v0,4
         syscall
+
         la $a0,d6
         li $v0,4
         syscall
+
         la $a0,d7
         li $v0,4
         syscall
+
         la $a0,d8
         li $v0,4
         syscall
+
         la $a0,d0
         li $v0,4
         syscall
+
         la $a0,line
         li $v0,4
         syscall
+
         la $a0,ch
         li $v0,4
         syscall
+
         li $v0,5
         syscall
-        move $v0,$v0
-        jr $ra 
+
+        move $v0,$v0    #back to main
+        jr $ra
         
-    
-    
-            
+               
 
 .data
     op: .space 4
@@ -136,4 +173,3 @@
     d0: .asciiz "0, Exit \n"
     line: .asciiz "\n-----------------------------\n"
     ch: .asciiz "Choice? \n"
-
