@@ -34,6 +34,10 @@
                 li $v0,4
                 syscall
 
+                la $a0,pinB  #readPin(pinB)
+                jal read_pin
+                move $t1,$a0
+
                 j read_op
             case_3:
                 bne $t0,3,case_4    #if(op!=3)
