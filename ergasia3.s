@@ -10,9 +10,10 @@
 main:
     
     main_loop:
-        jal readOption #op=readOption();
+        jal readOption #op=readOption()
         sw $v0,op
-        lw $t0,op
+
+        lw $t0,op   #$t0=op
 
         blt $t0,1,exit  #elegxos while
         bgt $t0,8,exit
@@ -26,7 +27,7 @@ main:
 
             la $a0,pinA  #readPin(pinA)
             jal readPin
-            move $t1,$a0
+            move $t1,$v0    #$t1=pinA (base register)
 
             j read_op
         case_2:
@@ -36,15 +37,34 @@ main:
             li $v0,4
             syscall
 
-            la $a0,pinB  #readPin(pinB)
+            la $a0,pinB    #readPin(pinB)
             jal readPin
-            move $t1,$a0
+
+            move $t2,$v0    #$t2=pinB (base register)
 
             j read_op
         case_3:
             bne $t0,3,case_4    #if(op!=3)
 
             la $a0,c3   #printStr
+            li $v0,4
+            syscall
+
+            la $a0,pinA    #createSparse(int[] pinA, int[] SparseA)
+            la $a1,sparseA
+            jal createSparse
+
+            move $t3,$v0    #$t3 = sparseA (base register)
+            sw $v1,mikosA   #mikosA = createSparse(int[] pinA, int[] SparseA)
+
+            lw $t4,mikosA   #$t4 = mikosA
+
+            div $t4,$t4,2   #printInt
+            move $a0,$t4
+            li $v0,1
+            syscall
+
+            la $a0,values   #printStr
             li $v0,4
             syscall
 
@@ -100,7 +120,7 @@ exit:
     li $v0,10   #exit
     syscall
 
-readOption:
+readOption:     #readOption()
 #-----------printing choices--------------------------------------------------
     la $a0,line
     li $v0,4
@@ -150,18 +170,19 @@ readOption:
     li $v0,4
     syscall
 
-    li $v0,5
+    li $v0,5    #readInt
     syscall
 
     jr $ra  #back to main
 
-readPin:
+readPin:    #readPin(int[] pin)
+
     li $s0,0    #counter i
-    lw $s2,pinlen
+    lw $s2,pinlen   
     move $s1,$a0    #$s1=pinA (base register)
         
-    loop:
-        bge $s0,$s2,end_r   #if(i>=pin.length)
+    readPinLoop:
+        bge $s0,$s2,endRP   #if(i>=pin.length)
 
         la $a0,pos  #printStr
         li $v0,4
@@ -174,29 +195,62 @@ readPin:
         la $a0,sem  #printStr
         li $v0,4
         syscall 
-            
+
         li $v0,5    #readInt
         syscall
 
-        sb $v0,($s1)    #pin[i] = nextInt
+        sw $v0,($s1)    #pin[i] = nextInt 
         add $s1,$s1,4   #nextInt
         add $s0,$s0,1   #i++
-        j loop  
-    end_r:
-        move $a0,$s1    #back to main
+        j readPinLoop  
+
+    endRP:
+        move $v0,$s1    #back to main
         jr $ra
     
-test:
-    la $a0,line
-    li $v0,4
-    syscall
+createSparse:   #createSparse(int[] pin, int[] Sparse)
+    
+    li $s0,0    #k=0
+    li $s1,0    #i=0
+    lw $s2,pinlen
+    move $s3,$a0    #$s3 = pin
+    move $s4,$a1    #$s4 = sparse
 
-    jr $ra
+    createSparseLoop:
 
+        bge $s1,$s2,endCS   #if(i>=pin.length)
+        lw $s5,($s3)    #$s5 = pin[i]
+        beq $s5,0,equal    #if(pin[i]==0)
+
+        sw $s1,($s4)    #sparse[k++]=i
+        add $s0,$s0,1   #k++
+        add $s4,$s4,4   #next int in sparse
+
+        sw  $s5,($s4)   #sparse[k++]=pin[i]
+        add $s0,$s0,1   #k++
+        add $s3,$s3,4   #next int in pin
+
+        add $s1,$s1,1   #i++
+
+        j createSparseLoop
+
+    equal:
+
+        add $s1,$s1,1
+        add $s3,$s3,4   #next int in pin
+        j createSparseLoop
+
+    endCS:
+
+        move $v0,$s4    #back to main
+        move $v1,$s0
+        jr $ra
                
 
 .data
     op: .space 4
+    mikosA: .space 4
+    mikosB: .space 4
     w: .asciiz "ou mpoi"
     c1: .asciiz "Reading array A \n"
     c2: .asciiz "Reading array B \n"
@@ -217,9 +271,13 @@ test:
     d0: .asciiz "0, Exit \n"
     line: .asciiz "\n-----------------------------\n"
     ch: .asciiz "Choice? \n"
+    pos: .asciiz "Position "
+    sem: .asciiz ": "
+    values: .asciiz " values"
     pinA: .space 40    #pinA[10]
     pinB: .space 40    #pinB[10]
     pinlen: .word 10    #pin.length = 10
+    sparseA: .space 80  #sparseA[20]
+    sparseB: .space 80  #sparseB[20]
+    sparseC: .space 80  #sparseC[20]
     sparselen: .word 20    #sparse.length = 20
-    pos: .asciiz "Position "
-    sem: .asciiz ": "
