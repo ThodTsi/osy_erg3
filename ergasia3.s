@@ -8,7 +8,7 @@
     main:
         
         main_loop:
-                jal read_option #op=readOption();
+                jal readOption #op=readOption();
                 sw $v0,op
                 lw $t0,op
 
@@ -23,7 +23,7 @@
                 syscall
 
                 la $a0,pinA  #readPin(pinA)
-                jal read_pin
+                jal readPin
                 move $t1,$a0
 
                 j read_op
@@ -35,7 +35,7 @@
                 syscall
 
                 la $a0,pinB  #readPin(pinB)
-                jal read_pin
+                jal readPin
                 move $t1,$a0
 
                 j read_op
@@ -87,7 +87,7 @@
                 syscall
 
                 j read_op
-        read_op:
+            read_op:
                 j main_loop
         exit:
                 la $a0,w    #printStr
@@ -97,7 +97,7 @@
                 li $v0,10   #exit
                 syscall
 
-    read_option:
+    readOption:
     #-----------printing choices--------------------------------------------------
             la $a0,line
             li $v0,4
@@ -150,11 +150,10 @@
             li $v0,5
             syscall
 
-            move $v0,$v0    #back to main
-            jr $ra
+            jr $ra  #back to main
 
-    read_pin:
-            li $s0,0 #counter i
+    readPin:
+            li $s0,0    #counter i
             lw $s2,pinlen
             move $s1,$a0    #$s1=pinA (base register)
             
@@ -177,7 +176,7 @@
             syscall
 
             sb $v0,($s1)    #pin[i] = nextInt
-            add $s1,$s1,1   #nextInt
+            add $s1,$s1,4   #nextInt
             add $s0,$s0,1   #i++
             j loop  
         end_r:
@@ -215,8 +214,9 @@
     d0: .asciiz "0, Exit \n"
     line: .asciiz "\n-----------------------------\n"
     ch: .asciiz "Choice? \n"
-    pinA: .space 40
-    pinB: .space 40
-    pinlen: .word 10
+    pinA: .space 40    #pinA[10]
+    pinB: .space 40    #pinB[10]
+    pinlen: .word 10    #pin.length = 10
+    sparselen: .word 20    #sparse.length = 20
     pos: .asciiz "Position "
     sem: .asciiz ": "
