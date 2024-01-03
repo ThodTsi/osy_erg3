@@ -3,6 +3,46 @@
     # Am   : p3220127         | p3220215
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+    .data
+    op: .space 4
+    mikosA: .space 4
+    mikosB: .space 4
+    mikosC: .space 4
+    w: .asciiz "ou mpoi"
+    c1: .asciiz "Reading array A \n"
+    c2: .asciiz "Reading array B \n"
+    c3: .asciiz "Creating sparse array A \n"
+    c4: .asciiz "Creating sparse array B \n"
+    c5: .asciiz "Creating sparse array C = A + B \n"
+    c6: .asciiz "Displaying sparse array A \n"
+    c7: .asciiz "Displaying sparse array B \n"
+    c8: .asciiz "Displaying sparse array C \n"
+    d1: .asciiz "1. Read array A \n"
+    d2: .asciiz "2. Read array B \n"
+    d3: .asciiz "3. Create sparse array A \n"
+    d4: .asciiz "4. Create sparse array B \n"
+    d5: .asciiz "5. Create sparse array C = A + B \n"
+    d6: .asciiz "6. Display sparse array A \n"
+    d7: .asciiz "7. Display sparse array B \n"
+    d8: .asciiz "8. Display sparse array C \n"
+    d0: .asciiz "0, Exit \n"
+    line: .asciiz "\n-----------------------------\n"
+    ch: .asciiz "Choice? \n"
+    pos: .asciiz "Position "
+    pos2: .asciiz "Position: "
+    sem: .asciiz ": "
+    values: .asciiz " values"
+    Value: .asciiz " Value: "
+    newLine: .asciiz "\n"
+    pinA: .space 40    #pinA[10]
+    pinB: .space 40    #pinB[10]
+    pinlen: .word 10    #pin.length = 10
+    pinlenC: .word 20   #pin.length = 20
+    SparseA: .space 80  #sparseA[20]
+    SparseB: .space 80  #sparseB[20]
+    SparseC: .space 80  #sparseC[20]
+    sparselen: .word 20    #sparse.length = 20
+
     .text
     .globl main
 
@@ -424,18 +464,20 @@ printSparse:    #printSparse (int [] Sparse, int mikos)
         li $v0,4
         syscall
 
-        move $a0,$s0    #printInt
+        lw $t0,($s0)
+        move $a0,$t0    #printInt
         li $v0,1
         syscall
 
         add $s2,$s2,1
         add $s0,$s0,4
 
-        #la $a0,Value  #printStr
-        #li $v0,4
-        #syscall
+        la $a0,Value  #printStr
+        li $v0,4
+        syscall
 
-        move $a0,$s0    #printInt
+        lw $t0,($s0)
+        move $a0,$t0    #printInt
         li $v0,1
         syscall
 
@@ -451,45 +493,3 @@ printSparse:    #printSparse (int [] Sparse, int mikos)
     endPS:
 
         jr $ra  #back to main
-
-
-
-.data
-    op: .space 4
-    mikosA: .space 4
-    mikosB: .space 4
-    mikosC: .space 4
-    w: .asciiz "ou mpoi"
-    c1: .asciiz "Reading array A \n"
-    c2: .asciiz "Reading array B \n"
-    c3: .asciiz "Creating sparse array A \n"
-    c4: .asciiz "Creating sparse array B \n"
-    c5: .asciiz "Creating sparse array C = A + B \n"
-    c6: .asciiz "Displaying sparse array A \n"
-    c7: .asciiz "Displaying sparse array B \n"
-    c8: .asciiz "Displaying sparse array C \n"
-    d1: .asciiz "1. Read array A \n"
-    d2: .asciiz "2. Read array B \n"
-    d3: .asciiz "3. Create sparse array A \n"
-    d4: .asciiz "4. Create sparse array B \n"
-    d5: .asciiz "5. Create sparse array C = A + B \n"
-    d6: .asciiz "6. Display sparse array A \n"
-    d7: .asciiz "7. Display sparse array B \n"
-    d8: .asciiz "8. Display sparse array C \n"
-    d0: .asciiz "0, Exit \n"
-    line: .asciiz "\n-----------------------------\n"
-    ch: .asciiz "Choice? \n"
-    pos: .asciiz "Position "
-    pos2: .asciiz "Position: "
-    sem: .asciiz ": "
-    values: .asciiz " values"
-    #Value: .asciiz " Value: "
-    newLine: .asciiz "\n"
-    pinA: .space 40    #pinA[10]
-    pinB: .space 40    #pinB[10]
-    pinlen: .word 10    #pin.length = 10
-    pinlenC: .word 20   #pin.length = 20
-    SparseA: .space 80  #sparseA[20]
-    SparseB: .space 80  #sparseB[20]
-    SparseC: .space 80  #sparseC[20]
-    sparselen: .word 20    #sparse.length = 20
