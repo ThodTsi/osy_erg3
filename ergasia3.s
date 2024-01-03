@@ -26,8 +26,25 @@ main:
             syscall
 
             la $a0,pinA  #readPin(pinA)
+            lw $a1,pinlen
+            addiu $sp,$sp,-4
+            sw $ra,0($sp)
             jal readPin
-            move $t1,$v0    #$t1=pinA (base register)
+            lw $ra,0($sp)
+            addiu $sp,$sp,4
+            #move $t1,$v0    #$t1=pinA (base register)
+            li $t2,0
+            la $t0,pinA
+            loop:    
+                bgt $t2,9,read_op
+                lw $t1,0($t0)
+                li $v0,1
+                move $a0,$t1
+                syscall
+                addi $t0,$t0,4
+                addi $t2,$t2,1
+                j loop
+
 
             j read_op
         case_2:
@@ -38,9 +55,24 @@ main:
             syscall
 
             la $a0,pinB    #readPin(pinB)
+            lw $a1,pinlen
+            addiu $sp,$sp,-4
+            sw $ra,0($sp)
             jal readPin
-            move $t2,$v0    #$t2=pinB (base register)
-
+            lw $ra,0($sp)
+            addiu $sp,$sp,4
+            #move $t2,$v0    #$t2=pinB (base register)
+            li $t2,0
+            la $t0,pinB
+            loop2:    
+                bgt $t2,9,read_op
+                lw $t1,0($t0)
+                li $v0,1
+                move $a0,$t1
+                syscall
+                addi $t0,$t0,4
+                addi $t2,$t2,1
+                j loop2
             j read_op
         case_3:
             bne $t0,3,case_4    #if(op!=3)
@@ -221,9 +253,8 @@ readOption:     #readOption()
 readPin:    #readPin(int[] pin)
 
     li $s0,0    #counter i
-    lw $s2,pinlen   
     move $s1,$a0    #$s1=pinA (base register)
-        
+    move $s2,$a1    
     readPinLoop:
         bge $s0,$s2,endRP   #if(i>=pin.length)
 
@@ -242,8 +273,8 @@ readPin:    #readPin(int[] pin)
         li $v0,5    #readInt
         syscall
 
-        sw $v0,($s1)    #pin[i] = nextInt 
-        add $s1,$s1,4   #nextInt
+        sw $v0,0($s1)    #pin[i] = nextInt 
+        addiu $s1,$s1,4   #nextInt
         add $s0,$s0,1   #i++
         j readPinLoop  
 
