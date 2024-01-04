@@ -8,7 +8,6 @@
     .globl main
 
 main:
-    
     main_loop:
         jal readOption #op=readOption()
         sw $v0,op
@@ -26,12 +25,12 @@ main:
             syscall
 
             la $a0,pinA  #readPin(pinA)
-            lw $a1,pinlen
-            addiu $sp,$sp,-4
-            sw $ra,0($sp)
+            #lw $a1,pinlen
+            #addiu $sp,$sp,-4
+            #sw $ra,0($sp)
             jal readPin
-            lw $ra,0($sp)
-            addiu $sp,$sp,4
+            #lw $ra,0($sp)
+            #addiu $sp,$sp,4
             #move $t1,$v0    #$t1=pinA (base register)
             li $t2,0
             la $t0,pinA
@@ -55,12 +54,11 @@ main:
             syscall
 
             la $a0,pinB    #readPin(pinB)
-            lw $a1,pinlen
-            addiu $sp,$sp,-4
-            sw $ra,0($sp)
+            #addiu $sp,$sp,-4
+            #sw $ra,0($sp)
             jal readPin
-            lw $ra,0($sp)
-            addiu $sp,$sp,4
+            #lw $ra,0($sp)
+            #addiu $sp,$sp,4
             #move $t2,$v0    #$t2=pinB (base register)
             li $t2,0
             la $t0,pinB
@@ -84,20 +82,34 @@ main:
             la $a0,pinA    #createSparse(int[] pinA, int[] SparseA)
             la $a1,SparseA
             jal createSparse
+            sw $v0,mikosA
+            lw $t7,mikosA    # $t7 = mikos Sparse A
+            li $t2,0
+            la $t0,SparseA
+            loop3:    
+                bge $t2,$t7,read_op
+                lw $t1,0($t0)
+                li $v0,1
+                move $a0,$t1
+                syscall
+                addi $t0,$t0,4
+                addi $t2,$t2,1
+                j loop3
+            j read_op
 
-            move $t3,$v0    #$t3 = SparseA (base register)
-            sw $v1,mikosA   #mikosA = createSparse(int[] pinA, int[] SparseA)
+            #move $t3,$v0    #$t3 = SparseA (base register)
+            #sw $v1,mikosA   #mikosA = createSparse(int[] pinA, int[] SparseA)
 
-            lw $t4,mikosA   #$t4 = mikosA
+            #lw $t4,mikosA   #$t4 = mikosA
 
-            div $t4,$t4,2   #printInt
-            move $a0,$t4
-            li $v0,1
-            syscall
+            #div $t4,$t4,2   #printInt
+            #move $a0,$t4
+            #li $v0,1
+            #syscall
 
-            la $a0,values   #printStr
-            li $v0,4
-            syscall
+            #la $a0,values   #printStr
+            #li $v0,4
+            #syscall
 
             j read_op
         case_4:
@@ -111,19 +123,30 @@ main:
             la $a1,SparseB
             jal createSparse
 
-            move $t5,$v0    #$t5 = SparseB (base register)
-            sw $v1,mikosB   #mikosB = createSparse(int[] pinB, int[] SparseB)
+            #move $t5,$v0    #$t5 = SparseB (base register)
+            sw $v0,mikosB   #mikosB = createSparse(int[] pinB, int[] SparseB)
+            lw $t8,mikosB
+            li $t2,0
+            la $t0,SparseB
+            loop4:    
+                bge $t2,$t8,read_op
+                lw $t1,0($t0)
+                li $v0,1
+                move $a0,$t1
+                syscall
+                addi $t0,$t0,4
+                addi $t2,$t2,1
+                j loop4
+            j read_op
 
-            lw $t6,mikosB   #$t6 = mikosB
+            #div $t6,$t6,2   #printInt
+            #move $a0,$t6
+            #li $v0,1
+            #syscall
 
-            div $t6,$t6,2   #printInt
-            move $a0,$t6
-            li $v0,1
-            syscall
-
-            la $a0,values   #printStr
-            li $v0,4
-            syscall
+            #la $a0,values   #printStr
+            #li $v0,4
+            #syscall
 
 
             j read_op
@@ -135,29 +158,38 @@ main:
             syscall
 
             la $a0,SparseA  #addSparse(SparseA, mikosA, SparseB, mikosB, SparseC)
-            lw $a1,mikosA
-            la $a2,SparseB
-            lw $a3,mikosB
-            sub $sp,$sp,4
-            la $t9,SparseC
-            sw $t9,0($sp)
+            la $a1,SparseB
+            la $a2,SparseC
+            #sub $sp,$sp,4
+            #la $t9,SparseC
+            #sw $t9,0($sp)
             jal addSparse
+            sw $v0,mikosC
+            lw $t9,mikosC
+            li $t2,0
+            la $t0,SparseC
+            loop5:    
+                bge $t2,$t9,read_op
+                lw $t1,0($t0)
+                li $v0,1
+                move $a0,$t1
+                syscall
+                addi $t0,$t0,4
+                addi $t2,$t2,1
+                j loop5
+            #add $sp,$sp,4
+            #sw $v1,mikosC   #mikosC = addSparse(SparseA, mikosA, SparseB, mikosB, SparseC)
 
-            add $sp,$sp,4
+            #lw $t8,mikosC   #$t8 = mikosC
 
-            move $t7,$v0    #$t7 = SparseC
-            sw $v1,mikosC   #mikosC = addSparse(SparseA, mikosA, SparseB, mikosB, SparseC)
+            #div $t8,$t8,2   #printInt
+            #move $a0,$t8
+            #li $v0,1
+            #syscall
 
-            lw $t8,mikosC   #$t8 = mikosC
-
-            div $t8,$t8,2   #printInt
-            move $a0,$t8
-            li $v0,1
-            syscall
-
-            la $a0,values   #printStr
-            li $v0,4
-            syscall
+            #la $a0,values   #printStr
+            #li $v0,4
+            #syscall
 
             j read_op
         case_6:
@@ -166,7 +198,9 @@ main:
             la $a0,c6   #printStr
             li $v0,4
             syscall
-
+            la $a0,SparseA
+            lw $a1,mikosA
+            jal displaySparse
             j read_op
         case_7:
             bne $t0,7,case_8    #if(op!=7)
@@ -174,7 +208,9 @@ main:
             la $a0,c7   #printStr
             li $v0,4
             syscall
-
+            la $a0,SparseB
+            lw $a1,mikosB
+            jal displaySparse
             j read_op
         case_8:
             bne $t0,8,read_op   #if(op!=8)
@@ -182,7 +218,9 @@ main:
             la $a0,c8   #printStr
             li $v0,4
             syscall
-
+            la $a0,SparseC
+            lw $a1,mikosC
+            jal displaySparse
             j read_op
         read_op:
             j main_loop
@@ -254,7 +292,7 @@ readPin:    #readPin(int[] pin)
 
     li $s0,0    #counter i
     move $s1,$a0    #$s1=pinA (base register)
-    move $s2,$a1    
+    lw $s2,pinlen    
     readPinLoop:
         bge $s0,$s2,endRP   #if(i>=pin.length)
 
@@ -272,14 +310,12 @@ readPin:    #readPin(int[] pin)
 
         li $v0,5    #readInt
         syscall
-
         sw $v0,0($s1)    #pin[i] = nextInt 
-        addiu $s1,$s1,4   #nextInt
-        add $s0,$s0,1   #i++
+        addi $s1,$s1,4   #nextInt
+        addi $s0,$s0,1   #i++
         j readPinLoop  
 
     endRP:
-        move $v0,$s1    #back to main
         jr $ra
     
 createSparse:   #createSparse(int[] pin, int[] Sparse)
@@ -293,40 +329,39 @@ createSparse:   #createSparse(int[] pin, int[] Sparse)
     createSparseLoop:
 
         bge $s1,$s2,endCS   #if(i>=pin.length)
-        lw $s5,($s3)    #$s5 = pin[i]
+        lw $s5,0($s3)    #$s5 = pin[i]
         beq $s5,0,equal    #if(pin[i]==0)
 
-        sw $s1,($s4)    #sparse[k++]=i
+        sw $s1,0($s4)    #sparse[k++]=i
         add $s0,$s0,1   #k++
-        add $s4,$s4,4   #next int in sparse
+        add $s4,$s4,4   #next position in sparse
 
-        sw  $s5,($s4)   #sparse[k++]=pin[i]
+        sw  $s5,0($s4)   #sparse[k++]=pin[i]
         add $s0,$s0,1   #k++
         add $s3,$s3,4   #next int in pin
+        add $s4,$s4,4  #next position in sparse
 
         add $s1,$s1,1   #i++
-
         j createSparseLoop
 
     equal:
 
         add $s1,$s1,1
-        add $s3,$s3,4   #next int in pin
+        addiu $s3,$s3,4   #next int in pin
         j createSparseLoop
 
     endCS:
 
-        move $v0,$s4    #back to main
-        move $v1,$s0
+        move $v0,$s0    #back to main
         jr $ra
                
 addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, int [] SparseC)
 
-    lw $s7, 0($sp)  #$s7 = SparseC (base register)
+    move $s7,$a2  #$s7 = SparseC (base register)
     move $s0,$a0  #$s0 = SparseA (base register)
-    move $s1,$a1  #$s1 = mikosA
-    move $s2,$a2  #$s2 = SparseB (base register)
-    move $s3,$a3  #$s3 = mikosB
+    lw $s1,mikosA  #$s1 = mikosA
+    move $s2,$a1  #$s2 = SparseB (base register)
+    lw $s3,mikosB  #$s3 = mikosB
     li $s4,0    #a = 0
     li $s5,0    #b = 0
     li $s6,0    #c = 0
@@ -336,76 +371,80 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
         bge $s4,$s1,for2   #if(a >= mikosA)
         bge $s5,$s3,for2   #if(b >= mikosB)
 
-        lw $t1,($s0)
-        lw $t2,($s2)
-        bge $t1,$t2,else_if    #if(SparseA[a] >= Sparse[b])
+        lw $t0,0($s0)  # $t0 = SparseA[i]
+        lw $t1,0($s2)  # $t1 = SparseB[i]
+        bge $t0,$t1,else_if    #if(SparseA[a] >= Sparse[b])
 
-        sw $s0,($s7)    #SparseC[c++] = SparseA[a++]
-        add $s6,$s6,1
-        add $s4,$s4,1
+        sw $t0,0($s7)    #SparseC[c++] = SparseA[a++]
+        add $s6,$s6,1    # c++
+        add $s4,$s4,1   # a++
         add $s7,$s7,4
         add $s0,$s0,4
 
-        sw $s0,($s7)    #SparseC[c++] = SparseA[a++]
+        lw $t0,0($s0)
+        sw $t0,0($s7)    #SparseC[c++] = SparseA[a++]
         add $s6,$s6,1
-        add $s4,$s4,1
-        add $s7,$s7,4
+        add $s4,$s4,1       
+        add $s7,$s7,4      #next address SparseC
         add $s0,$s0,4
 
         j for1
     
-    else_if:
+        else_if:
 
-        lw $t1,($s0)
-        lw $t2,($s2)
-        ble $t1,$t2,else    #if(SparseA[a] <= Sparse[b])
+            lw $t0,0($s0)
+            lw $t1,0($s2)
+            beq $t0,$t1,else    #if(SparseA[a] == Sparse[b])
 
-        sw $s2,($s7)    #SparseC[c++] = SparseB[b++]
-        add $s6,$s6,1
-        add $s5,$s5,1
-        add $s7,$s7,4
-        add $s2,$s2,4
+            sw $t1,0($s7)    #SparseC[c++] = SparseB[b++]
+            add $s6,$s6,1    # c++
+            add $s5,$s5,1    # b++ 
+            add $s7,$s7,4    # next address SparseC
+            add $s2,$s2,4   # next address SparseB
 
-        sw $s2,($s7)    #SparseC[c++] = SparseB[b++]
-        add $s6,$s6,1
-        add $s5,$s5,1
-        add $s7,$s7,4
-        add $s2,$s2,4
+            lw $t1,0($s2)
+            sw $t1,0($s7)    #SparseC[c++] = SparseB[b++]
+            add $s6,$s6,1
+            add $s5,$s5,1
+            add $s7,$s7,4
+            add $s2,$s2,4
 
-        j for1
+            j for1
 
-    else:
+        else:
+            lw $t0,0($s0)
+            sw $t0,0($s7)    #SparseC[c++] = SparseA[a++]
+            add $s6,$s6,1    # c++    
+            add $s4,$s4,1    # a++
+            add $s7,$s7,4    # next address SparseC
+            add $s0,$s0,4   # next address SparseA
+            add $s2,$s2,4    #next address SparseB
+            add $s5,$s5,1   #b++
+            lw $t0,0($s0)
+            lw $t1,0($s2)
+            add $t2,$t0,$t1    #SparseC[c++] = SparseA[a++] + SparseB[b++]
+            sw $t2,0($s7)
+            add $s6,$s6,1   #c++
+            add $s4,$s4,1   #a++
+            add $s5,$s5,1   #b++
+            add $s7,$s7,4   #next address SparseC
+            add $s0,$s0,4   #next address SparseA
+            add $s2,$s2,4   #next address SparseB
 
-        sw $s0,($s7)    #SparseC[c++] = SparseA[a++]
-        add $s6,$s6,1
-        add $s4,$s4,1
-        add $s7,$s7,4
-        add $s0,$s0,4
-
-        add $s5,$s5,1   #b++
-
-        add $t2,$s0,$s2    #SparseC[c++] = SparseA[a++] + SparseB[b++]
-        sw $t2,($s7)
-        add $s6,$s6,1
-        add $s4,$s4,1
-        add $s5,$s5,1
-        add $s7,$s7,4
-        add $s0,$s0,4
-        add $s2,$s2,4
-
-        j for1
+            j for1
 
     for2:
 
         bge $s4,$s1,for3   #if(a >= mikosA)
-
-        sw $s0,($s7)    #SparseC[c++] = SparseA[a++]
+        lw $t0,0($s0)
+        sw $t0,0($s7)    #SparseC[c++] = SparseA[a++]
         add $s6,$s6,1
         add $s4,$s4,1
         add $s7,$s7,4
         add $s0,$s0,4
 
-        sw $s0,($s7)    #SparseC[c++] = SparseA[a++]
+        lw $t0,0($s0)
+        sw $t0,0($s7)    #SparseC[c++] = SparseA[a++]
         add $s6,$s6,1
         add $s4,$s4,1
         add $s7,$s7,4
@@ -416,14 +455,15 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
     for3:
 
         bge $s5,$s3,endAS   #if(b >= mikosB)
-
-        sw $s2,($s7)    #SparseC[c++] = SparseB[b++]
+        lw $t1,0($s2)
+        sw $t1,($s7)    #SparseC[c++] = SparseB[b++]
         add $s6,$s6,1
         add $s5,$s5,1
         add $s7,$s7,4
         add $s2,$s2,4
 
-        sw $s2,($s7)    #SparseC[c++] = SparseB[b++]
+        lw $t1,0($s2)
+        sw $t1,($s7)    #SparseC[c++] = SparseB[b++]
         add $s6,$s6,1
         add $s5,$s5,1
         add $s7,$s7,4
@@ -433,9 +473,41 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
 
     endAS:
 
-        move $v0,$s7    #back to main
-        move $v1,$s6
+        move $v0,$s6    #back to main
         jr $ra
+
+displaySparse:
+    move $s0,$a0 # $s0 = address of Sparse A
+    move $s1,$a1 # $s1 = mikos 
+    li $t2,0    # counter i
+    loopDSA:
+        bge $t2,$s1,end_d 
+        la $a0,pos2
+        li $v0,4
+        syscall
+        lw $t0,0($s0)
+        addi $s0,$s0,4
+        li $v0,1
+        move $a0,$t0
+        syscall  
+        la $a0,space 
+        li $v0,4
+        syscall
+        la $a0,val
+        li $v0,4
+        syscall
+        lw $t0,0($s0)
+        addi $s0,$s0,4
+        li $v0,1
+        move $a0,$t0
+        syscall  
+        la $a0,chl
+        li $v0,4
+        syscall
+        add $t2,$t2,2
+        j loopDSA
+    end_d:
+        jr $ra   
 
 
 
@@ -444,6 +516,15 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
     mikosA: .space 4
     mikosB: .space 4
     mikosC: .space 4
+    pinA: .space 40    #pinA[10]
+    pinB: .space 40    #pinB[10]
+    SparseA: .space 80  #sparseA[20]
+    SparseB: .space 80  #sparseB[20]
+    SparseC: .space 80  #sparseC[20]
+    pinlen: .word 10    #pin.length = 10
+    pinlenC: .word 20   #pin.length = 20
+    pinlenSparse: .word 20   #pin.length = 20
+    sparselen: .word 20    #sparse.length = 20
     w: .asciiz "ou mpoi"
     c1: .asciiz "Reading array A \n"
     c2: .asciiz "Reading array B \n"
@@ -465,13 +546,9 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
     line: .asciiz "\n-----------------------------\n"
     ch: .asciiz "Choice? \n"
     pos: .asciiz "Position "
+    pos2: .asciiz "Position: "
+    space: .asciiz " "
+    val: .asciiz "Value: "
     sem: .asciiz ": "
     values: .asciiz " values"
-    pinA: .space 40    #pinA[10]
-    pinB: .space 40    #pinB[10]
-    pinlen: .word 10    #pin.length = 10
-    pinlenC: .word 20   #pin.length = 20
-    SparseA: .space 80  #sparseA[20]
-    SparseB: .space 80  #sparseB[20]
-    SparseC: .space 80  #sparseC[20]
-    sparselen: .word 20    #sparse.length = 20
+    chl: .asciiz "\n"
