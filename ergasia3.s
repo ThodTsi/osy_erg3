@@ -25,13 +25,7 @@ main:
             syscall
 
             la $a0,pinA  #readPin(pinA)
-            #lw $a1,pinlen
-            #addiu $sp,$sp,-4
-            #sw $ra,0($sp)
             jal readPin
-            #lw $ra,0($sp)
-            #addiu $sp,$sp,4
-            #move $t1,$v0    #$t1=pinA (base register)
             li $t2,0
             la $t0,pinA
             loop:    
@@ -54,12 +48,7 @@ main:
             syscall
 
             la $a0,pinB    #readPin(pinB)
-            #addiu $sp,$sp,-4
-            #sw $ra,0($sp)
             jal readPin
-            #lw $ra,0($sp)
-            #addiu $sp,$sp,4
-            #move $t2,$v0    #$t2=pinB (base register)
             li $t2,0
             la $t0,pinB
             loop2:    
@@ -84,34 +73,28 @@ main:
             jal createSparse
             sw $v0,mikosA
             lw $t7,mikosA    # $t7 = mikos Sparse A
-            li $t2,0
-            la $t0,SparseA
-            loop3:    
-                bge $t2,$t7,read_op
-                lw $t1,0($t0)
+            
+            move $t0,$t7      # print number of values in sparse array A (multiple values)
+            div $t0,$t0,2
+            beq $t0,1,onev1
+            move $a0,$t0
+            li $v0,1
+            syscall
+
+            la $a0,values   #printStr
+            li $v0,4
+            syscall
+
+            j read_op
+            onev1:                  # print number of values in sparse array A (one value)
+                move $a0,$t0
                 li $v0,1
-                move $a0,$t1
                 syscall
-                addi $t0,$t0,4
-                addi $t2,$t2,1
-                j loop3
-            j read_op
 
-            #move $t3,$v0    #$t3 = SparseA (base register)
-            #sw $v1,mikosA   #mikosA = createSparse(int[] pinA, int[] SparseA)
-
-            #lw $t4,mikosA   #$t4 = mikosA
-
-            #div $t4,$t4,2   #printInt
-            #move $a0,$t4
-            #li $v0,1
-            #syscall
-
-            #la $a0,values   #printStr
-            #li $v0,4
-            #syscall
-
-            j read_op
+                la $a0,value   #printStr
+                li $v0,4
+                syscall
+                j read_op
         case_4:
             bne $t0,4,case_5    #if(op!=4)
 
@@ -122,34 +105,29 @@ main:
             la $a0,pinB    #createSparse(int[] pinB, int[] SparseB)
             la $a1,SparseB
             jal createSparse
-
-            #move $t5,$v0    #$t5 = SparseB (base register)
             sw $v0,mikosB   #mikosB = createSparse(int[] pinB, int[] SparseB)
             lw $t8,mikosB
-            li $t2,0
-            la $t0,SparseB
-            loop4:    
-                bge $t2,$t8,read_op
-                lw $t1,0($t0)
+        
+            move $t0,$t8        # print number of values in sparse array B (mulriple values)
+            div $t0,$t0,2
+            beq $t0,1,onev2
+            move $a0,$t0
+            li $v0,1
+            syscall
+
+            la $a0,values   #printStr
+            li $v0,4
+            syscall
+            j read_op
+            onev2:              # print number of values in sparse array B (one value)
+                move $a0,$t0
                 li $v0,1
-                move $a0,$t1
                 syscall
-                addi $t0,$t0,4
-                addi $t2,$t2,1
-                j loop4
-            j read_op
 
-            #div $t6,$t6,2   #printInt
-            #move $a0,$t6
-            #li $v0,1
-            #syscall
-
-            #la $a0,values   #printStr
-            #li $v0,4
-            #syscall
-
-
-            j read_op
+                la $a0,value   #printStr
+                li $v0,4
+                syscall
+                j read_op
         case_5:
             bne $t0,5,case_6    #if(op!=5)
 
@@ -157,41 +135,33 @@ main:
             li $v0,4
             syscall
 
-            la $a0,SparseA  #addSparse(SparseA, mikosA, SparseB, mikosB, SparseC)
-            la $a1,SparseB
-            la $a2,SparseC
-            #sub $sp,$sp,4
-            #la $t9,SparseC
-            #sw $t9,0($sp)
+            la $a0,SparseA  #addSparse(SparseA,SparseB,SparseC)
+            la $a1,SparseB    # ta mikh ta anaktoume sth methodo kathos den uparxei xwros 
+            la $a2,SparseC      #gia 5 orismata sthn assembly
             jal addSparse
             sw $v0,mikosC
             lw $t9,mikosC
-            li $t2,0
-            la $t0,SparseC
-            loop5:    
-                bge $t2,$t9,read_op
-                lw $t1,0($t0)
-                li $v0,1
-                move $a0,$t1
-                syscall
-                addi $t0,$t0,4
-                addi $t2,$t2,1
-                j loop5
-            #add $sp,$sp,4
-            #sw $v1,mikosC   #mikosC = addSparse(SparseA, mikosA, SparseB, mikosB, SparseC)
+            
+            move $t0,$t9        # print number of values in sparse array C (multiple values)
+            div $t0,$t0,2   
+            beq $t0,1,onev3
+            move $a0,$t0
+            li $v0,1
+            syscall
 
-            #lw $t8,mikosC   #$t8 = mikosC
-
-            #div $t8,$t8,2   #printInt
-            #move $a0,$t8
-            #li $v0,1
-            #syscall
-
-            #la $a0,values   #printStr
-            #li $v0,4
-            #syscall
-
+            la $a0,values   #printStr
+            li $v0,4
+            syscall
             j read_op
+            onev3:              # print number of values in sparse array C (one value)
+                move $a0,$t0            
+                li $v0,1
+                syscall
+
+                la $a0,value   #printStr
+                li $v0,4
+                syscall
+                j read_op
         case_6:
             bne $t0,6,case_7    #if(op!=6)
 
@@ -226,10 +196,6 @@ main:
             j main_loop
 
 exit:
-    la $a0,w    #printStr
-    li $v0,4
-    syscall
-
     li $v0,10   #exit
     syscall
 
@@ -521,7 +487,6 @@ displaySparse:
     pinlenC: .word 20   #pin.length = 20
     pinlenSparse: .word 20   #pin.length = 20
     sparselen: .word 20    #sparse.length = 20
-    w: .asciiz "ou mpoi"
     c1: .asciiz "Reading array A \n"
     c2: .asciiz "Reading array B \n"
     c3: .asciiz "Creating sparse array A \n"
@@ -546,4 +511,5 @@ displaySparse:
     val: .asciiz "Value: "
     sem: .asciiz ": "
     values: .asciiz " values"
+    value: .asciiz " value"
     chl: .asciiz "\n"
