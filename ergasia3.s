@@ -52,7 +52,7 @@ main:
             
             move $t0,$t7      # print number of values in sparse array A (multiple values)
             div $t0,$t0,2
-            beq $t0,1,onev1
+            #beq $t0,1,onev1
             move $a0,$t0
             li $v0,1
             syscall
@@ -86,7 +86,7 @@ main:
         
             move $t0,$t8        # print number of values in sparse array B (mulriple values)
             div $t0,$t0,2
-            beq $t0,1,onev2
+            #beq $t0,1,onev2
             move $a0,$t0
             li $v0,1
             syscall
@@ -330,8 +330,8 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
     
         else_if:
 
-            lw $t0,0($s0)
-            lw $t1,0($s2)
+            #lw $t0,0($s0)
+            #lw $t1,0($s2)
             beq $t0,$t1,else    #if(SparseA[a] == Sparse[b])
 
             sw $t1,0($s7)    #SparseC[c++] = SparseB[b++]
@@ -350,14 +350,16 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
             j for1
 
         else:
-            lw $t0,0($s0)
+            #lw $t0,0($s0)
             sw $t0,0($s7)    #SparseC[c++] = SparseA[a++]
             add $s6,$s6,1    # c++    
             add $s4,$s4,1    # a++
             add $s7,$s7,4    # next address SparseC
             add $s0,$s0,4   # next address SparseA
             add $s2,$s2,4    #next address SparseB
+
             add $s5,$s5,1   #b++
+
             lw $t0,0($s0)
             lw $t1,0($s2)
             add $t2,$t0,$t1    #SparseC[c++] = SparseA[a++] + SparseB[b++]
