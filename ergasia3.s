@@ -26,19 +26,6 @@ main:
 
             la $a0,pinA  #readPin(pinA)
             jal readPin
-            li $t2,0
-            la $t0,pinA
-            loop:    
-                bgt $t2,9,read_op
-                lw $t1,0($t0)
-                li $v0,1
-                move $a0,$t1
-                syscall
-                addi $t0,$t0,4
-                addi $t2,$t2,1
-                j loop
-
-
             j read_op
         case_2:
             bne $t0,2,case_3    #if(op!=2)
@@ -49,17 +36,6 @@ main:
 
             la $a0,pinB    #readPin(pinB)
             jal readPin
-            li $t2,0
-            la $t0,pinB
-            loop2:    
-                bgt $t2,9,read_op
-                lw $t1,0($t0)
-                li $v0,1
-                move $a0,$t1
-                syscall
-                addi $t0,$t0,4
-                addi $t2,$t2,1
-                j loop2
             j read_op
         case_3:
             bne $t0,3,case_4    #if(op!=3)
