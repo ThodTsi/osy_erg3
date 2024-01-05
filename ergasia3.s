@@ -271,10 +271,6 @@ readOption:     #readOption()
     li $v0,4
     syscall
 
-    la $a0,d0
-    li $v0,4
-    syscall
-
     la $a0,line
     li $v0,4
     syscall
@@ -542,7 +538,6 @@ displaySparse:
     d6: .asciiz "6. Display sparse array A \n"
     d7: .asciiz "7. Display sparse array B \n"
     d8: .asciiz "8. Display sparse array C \n"
-    d0: .asciiz "0, Exit \n"
     line: .asciiz "\n-----------------------------\n"
     ch: .asciiz "Choice? \n"
     pos: .asciiz "Position "
