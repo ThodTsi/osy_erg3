@@ -415,34 +415,38 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
         jr $ra
 
 displaySparse:
-    move $s0,$a0 # $s0 = address of Sparse A
-    move $s1,$a1 # $s1 = mikos 
-    li $t2,0    # counter i
+    move $s0,$a0    # $s0 = address of Sparse
+    move $s1,$a1    # $s1 = mikos 
+    li $t2,0   # counter i
+
     loopDSA:
-        bge $t2,$s1,end_d 
-        la $a0,pos2
+        bge $t2,$s1,end_d   #if(i >= mikos)
+
+        la $a0,pos2    #printStr
         li $v0,4
         syscall
-        lw $t0,0($s0)
+
+        lw $t0,0($s0)   #print Sparse[i++]
         addi $s0,$s0,4
         li $v0,1
         move $a0,$t0
         syscall  
-        la $a0,space 
+
+        la $a0,val  
         li $v0,4
         syscall
-        la $a0,val
-        li $v0,4
-        syscall
-        lw $t0,0($s0)
+
+        lw $t0,0($s0)   #print Sparse[i++]
         addi $s0,$s0,4
         li $v0,1
         move $a0,$t0
         syscall  
-        la $a0,chl
+
+        la $a0,chl  #printStr
         li $v0,4
         syscall
-        add $t2,$t2,2
+
+        add $t2,$t2,2   #i+=2
         j loopDSA
     end_d:
         jr $ra   
@@ -483,8 +487,7 @@ displaySparse:
     ch: .asciiz "Choice? \n"
     pos: .asciiz "Position "
     pos2: .asciiz "Position: "
-    space: .asciiz " "
-    val: .asciiz "Value: "
+    val: .asciiz " Value: "
     sem: .asciiz ": "
     values: .asciiz " values"
     value: .asciiz " value"
