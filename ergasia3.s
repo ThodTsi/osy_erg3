@@ -52,25 +52,17 @@ main:
             
             move $t0,$t7      # print number of values in sparse array A (multiple values)
             div $t0,$t0,2
-            #beq $t0,1,onev1
             move $a0,$t0
             li $v0,1
             syscall
 
+            beq $t0,1,onev
             la $a0,values   #printStr
             li $v0,4
             syscall
 
             j read_op
-            onev1:                  # print number of values in sparse array A (one value)
-                move $a0,$t0
-                li $v0,1
-                syscall
 
-                la $a0,value   #printStr
-                li $v0,4
-                syscall
-                j read_op
         case_4:
             bne $t0,4,case_5    #if(op!=4)
 
@@ -86,24 +78,16 @@ main:
         
             move $t0,$t8        # print number of values in sparse array B (mulriple values)
             div $t0,$t0,2
-            #beq $t0,1,onev2
             move $a0,$t0
             li $v0,1
             syscall
 
+            beq $t0,1,onev
             la $a0,values   #printStr
             li $v0,4
             syscall
             j read_op
-            onev2:              # print number of values in sparse array B (one value)
-                move $a0,$t0
-                li $v0,1
-                syscall
 
-                la $a0,value   #printStr
-                li $v0,4
-                syscall
-                j read_op
         case_5:
             bne $t0,5,case_6    #if(op!=5)
 
@@ -120,54 +104,58 @@ main:
             
             move $t0,$t9        # print number of values in sparse array C (multiple values)
             div $t0,$t0,2   
-            beq $t0,1,onev3
             move $a0,$t0
             li $v0,1
             syscall
 
+            beq $t0,1,onev
             la $a0,values   #printStr
             li $v0,4
             syscall
             j read_op
-            onev3:              # print number of values in sparse array C (one value)
-                move $a0,$t0            
-                li $v0,1
-                syscall
 
-                la $a0,value   #printStr
-                li $v0,4
-                syscall
-                j read_op
         case_6:
             bne $t0,6,case_7    #if(op!=6)
 
             la $a0,c6   #printStr
             li $v0,4
             syscall
+
             la $a0,SparseA
             lw $a1,mikosA
-            jal displaySparse
+            jal printSparse
             j read_op
+
         case_7:
             bne $t0,7,case_8    #if(op!=7)
 
             la $a0,c7   #printStr
             li $v0,4
             syscall
+
             la $a0,SparseB
             lw $a1,mikosB
-            jal displaySparse
+            jal printSparse
             j read_op
+
         case_8:
             bne $t0,8,read_op   #if(op!=8)
 
             la $a0,c8   #printStr
             li $v0,4
             syscall
+
             la $a0,SparseC
             lw $a1,mikosC
-            jal displaySparse
+            jal printSparse
             j read_op
+
+        onev:   # print number of values in sparse array (one value)
+
+            la $a0,value   #printStr
+            li $v0,4
+            syscall
+
         read_op:
             j main_loop
 
@@ -330,8 +318,6 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
     
         else_if:
 
-            #lw $t0,0($s0)
-            #lw $t1,0($s2)
             beq $t0,$t1,else    #if(SparseA[a] == Sparse[b])
 
             sw $t1,0($s7)    #SparseC[c++] = SparseB[b++]
@@ -350,7 +336,7 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
             j for1
 
         else:
-            #lw $t0,0($s0)
+
             sw $t0,0($s7)    #SparseC[c++] = SparseA[a++]
             add $s6,$s6,1    # c++    
             add $s4,$s4,1    # a++
@@ -416,13 +402,14 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
         move $v0,$s6    #back to main
         jr $ra
 
-displaySparse:
+
+printSparse:
     move $s0,$a0    # $s0 = address of Sparse
     move $s1,$a1    # $s1 = mikos 
     li $t2,0   # counter i
 
-    loopDSA:
-        bge $t2,$s1,end_d   #if(i >= mikos)
+    loopPS:
+        bge $t2,$s1,end_p   #if(i >= mikos)
 
         la $a0,pos2    #printStr
         li $v0,4
@@ -449,8 +436,8 @@ displaySparse:
         syscall
 
         add $t2,$t2,2   #i+=2
-        j loopDSA
-    end_d:
+        j loopPS
+    end_p:
         jr $ra   
 
 
