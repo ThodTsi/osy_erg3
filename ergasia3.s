@@ -95,9 +95,13 @@ main:
             li $v0,4
             syscall
 
-            la $a0,SparseA  #addSparse(SparseA,SparseB,SparseC)
-            la $a1,SparseB    # ta mikh ta anaktoume sth methodo kathos den uparxei xwros 
-            la $a2,SparseC      #gia 5 orismata sthn assembly
+            la $a0,SparseA  #addSparse(SparseA,mikosA,SparseB,mikosB,SparseC)
+            la $a1,SparseB
+            la $a2,SparseC
+            lw $a3,mikosA
+            lw $t4,mikosB
+            sub $sp,$sp,4
+            sw $t4,0($sp)
             jal addSparse
             sw $v0,mikosC
             lw $t9,mikosC
@@ -160,6 +164,8 @@ main:
             j main_loop
 
 exit:
+
+    add $sp,$sp,4
     li $v0,10   #exit
     syscall
 
@@ -283,11 +289,13 @@ createSparse:   #createSparse(int[] pin, int[] Sparse)
                
 addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, int [] SparseC)
 
+    sub $sp,$sp,4
+    sw $t4,0($sp)
+    lw $s3,0($sp)
     move $s7,$a2  #$s7 = SparseC (base register)
     move $s0,$a0  #$s0 = SparseA (base register)
-    lw $s1,mikosA  #$s1 = mikosA
+    move $s1,$a3  #$s1 = mikosA
     move $s2,$a1  #$s2 = SparseB (base register)
-    lw $s3,mikosB  #$s3 = mikosB
     li $s4,0    #a = 0
     li $s5,0    #b = 0
     li $s6,0    #c = 0
@@ -399,6 +407,7 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
 
     endAS:
 
+        add $sp,$sp,4
         move $v0,$s6    #back to main
         jr $ra
 
@@ -449,9 +458,9 @@ printSparse:
     mikosC: .space 4
     pinA: .space 40    #pinA[10]
     pinB: .space 40    #pinB[10]
-    SparseA: .space 80  #sparseA[20]
-    SparseB: .space 80  #sparseB[20]
-    SparseC: .space 80  #sparseC[20]
+    SparseA: .space 80  #SparseA[20]
+    SparseB: .space 80  #SparseB[20]
+    SparseC: .space 80  #SparseC[20]
     pinlen: .word 10    #pin.length = 10
     pinlenC: .word 20   #pin.length = 20
     pinlenSparse: .word 20   #pin.length = 20
