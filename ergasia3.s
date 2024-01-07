@@ -76,7 +76,7 @@ main:
             sw $v0,mikosB   #mikosB = createSparse(int[] pinB, int[] SparseB)
             lw $t8,mikosB
         
-            move $t0,$t8        # print number of values in sparse array B (mulriple values)
+            move $t0,$t8        # print number of values in sparse array B (multiple values)
             div $t0,$t0,2
             move $a0,$t0
             li $v0,1
@@ -103,7 +103,7 @@ main:
             sub $sp,$sp,4
             sw $t4,0($sp)
             jal addSparse
-            sw $v0,mikosC
+            sw $v0,mikosC   #mikosC = addSparse(SparseA, mikosA, SparseB, mikosB, SparseC)
             lw $t9,mikosC
             
             move $t0,$t9        # print number of values in sparse array C (multiple values)
@@ -309,17 +309,17 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
         lw $t1,0($s2)  # $t1 = SparseB[i]
         bge $t0,$t1,else_if    #if(SparseA[a] >= Sparse[b])
 
-        sw $t0,0($s7)    #SparseC[c++] = SparseA[a++]
-        add $s6,$s6,1    # c++
+        sw $t0,0($s7)   #SparseC[c++] = SparseA[a++]
+        add $s6,$s6,1   # c++
         add $s4,$s4,1   # a++
-        add $s7,$s7,4
-        add $s0,$s0,4
+        add $s7,$s7,4   #next int in SparseC
+        add $s0,$s0,4   #next int in SparceA
 
         lw $t0,0($s0)
         sw $t0,0($s7)    #SparseC[c++] = SparseA[a++]
         add $s6,$s6,1
         add $s4,$s4,1       
-        add $s7,$s7,4      #next address SparseC
+        add $s7,$s7,4      
         add $s0,$s0,4
 
         j for1
@@ -329,10 +329,10 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
             beq $t0,$t1,else    #if(SparseA[a] == Sparse[b])
 
             sw $t1,0($s7)    #SparseC[c++] = SparseB[b++]
-            add $s6,$s6,1    # c++
-            add $s5,$s5,1    # b++ 
-            add $s7,$s7,4    # next address SparseC
-            add $s2,$s2,4   # next address SparseB
+            add $s6,$s6,1
+            add $s5,$s5,1
+            add $s7,$s7,4
+            add $s2,$s2,4
 
             lw $t1,0($s2)
             sw $t1,0($s7)    #SparseC[c++] = SparseB[b++]
@@ -348,9 +348,9 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
             sw $t0,0($s7)    #SparseC[c++] = SparseA[a++]
             add $s6,$s6,1    # c++    
             add $s4,$s4,1    # a++
-            add $s7,$s7,4    # next address SparseC
-            add $s0,$s0,4   # next address SparseA
-            add $s2,$s2,4    #next address SparseB
+            add $s7,$s7,4 
+            add $s0,$s0,4
+            add $s2,$s2,4   #next address SparseB
 
             add $s5,$s5,1   #b++
 
@@ -358,12 +358,12 @@ addSparse:  #addSparse(int [] SparseA, int mikosA, int [] SparseB, int mikosB, i
             lw $t1,0($s2)
             add $t2,$t0,$t1    #SparseC[c++] = SparseA[a++] + SparseB[b++]
             sw $t2,0($s7)
-            add $s6,$s6,1   #c++
-            add $s4,$s4,1   #a++
-            add $s5,$s5,1   #b++
-            add $s7,$s7,4   #next address SparseC
-            add $s0,$s0,4   #next address SparseA
-            add $s2,$s2,4   #next address SparseB
+            add $s6,$s6,1
+            add $s4,$s4,1
+            add $s5,$s5,1
+            add $s7,$s7,4
+            add $s0,$s0,4
+            add $s2,$s2,4
 
             j for1
 
